@@ -112,6 +112,27 @@ A modern dashboard aesthetic inspired by developer dark-modes:
 
 ---
 
+## 📸 Screenshots
+
+Here are some previews of the toolkit in action:
+
+### 1. Control Dashboard Overview
+![Control Dashboard](screenshots/homepage_dashboard.png)
+
+### 2. Network Diagnostics Shell Console
+![Network Diagnostics](screenshots/network_diagnostics.png)
+
+### 3. Secure Password Generator
+![Password Generator](screenshots/password_generator.png)
+
+### 4. Aggregated Event Log Query Analyzer
+![Event Log Analyzer](screenshots/event_logs.png)
+
+### 5. Consolidated Reports Compilation & Archive
+![Reports History](screenshots/report_generator.png)
+
+---
+
 ## 🚀 Setup & Execution Guide
 
 ### 1. Prerequisites
