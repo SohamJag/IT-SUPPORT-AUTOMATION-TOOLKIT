@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support Automation - Dashboard{% endblock %}
+
+{% block header_title %}IT Support Control Dashboard{% endblock %}
+
+{% block content %}
+<!-- Quick Diagnostic Cards -->
+<div class="row">
+    <!-- Card 1: System Status -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="stat-label">System Health</div>
+                <div class="stat-icon"><i class="fas fa-desktop text-success"></i></div>
+            </div>
+            <div class="stat-value mb-2">{{ system.hostname }}</div>
+            <div class="status-pill status-active">
+                <span class="pulse-indicator"></span> {{ system.os }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Card 2: Disk Health -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="stat-label">Disk Storage</div>
+                <div class="stat-icon"><i class="fas fa-hdd text-success"></i></div>
+            </div>
+            <div class="stat-value mb-2">{{ system.disk.percent }}% Used</div>
+            {% if system.disk.percent > 90 %}
+            <div class="status-pill status-critical">
+                <span class="pulse-indicator red"></span> CRITICAL SPACE
+            </div>
+            {% else %}
+            <div class="status-pill status-active">
+                <span class="pulse-indicator"></span> {{ disk_status }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Card 3: Network Status -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="stat-label">Network Status</div>
+                <div class="stat-icon"><i class="fas fa-wifi text-success"></i></div>
+            </div>
+            <div class="stat-value mb-2" id="dash-net-val">
+                {{ network.internet.status }}
+            </div>
+            {% if network.internet.success %}
+            <div class="status-pill status-active" id="dash-net-pill">
+                <span class="pulse-indicator"></span> Latency: {{ network.ping.latency or 'N/A' }} ms
+            </div>
+            {% else %}
+            <div class="status-pill status-critical" id="dash-net-pill">
+                <span class="pulse-indicator red"></span> Offline
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Card 4: Services Status -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="stat-label">Services Status</div>
+                <div class="stat-icon"><i class="fas fa-cogs text-success"></i></div>
+            </div>
+            <div class="stat-value mb-2">{{ services_running_count }} / {{ services_total_count }} Active</div>
+            {% if services_running_count < services_total_count %}
+            <div class="status-pill status-warning">
+                <span class="pulse-indicator-warning"></span> Services Stopped
+            </div>
+            {% else %}
+            <div class="status-pill status-active">
+                <span class="pulse-indicator"></span> Healthy
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Resource utilization meters and specs -->
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="card-custom h-100">
+            <h2 class="card-title-custom"><i class="fas fa-tachometer-alt"></i>Resource Utilization</h2>
+            
+            <!-- CPU gauge -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold">CPU Usage ({{ system.cpu.cores_logical }} Cores)</span>
+                    <span class="text-success fw-bold">{{ system.cpu.current_usage }}%</span>
+                </div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: {{ system.cpu.current_usage }}%"></div>
+                </div>
+                <div class="text-muted mt-1" style="font-size: 0.8rem;">
+                    Model: {{ system.cpu.model }}
+                </div>
+            </div>
+            
+            <!-- RAM gauge -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold">Memory (RAM) Usage</span>
+                    <span class="text-success fw-bold">{{ system.ram.percent }}%</span>
+                </div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: {{ system.ram.percent }}%"></div>
+                </div>
+                <div class="text-muted mt-1" style="font-size: 0.8rem; display: flex; justify-content-between;">
+                    <span>Used: {{ system.ram.used }} GB</span>
+                    <span>Free: {{ system.ram.free }} GB</span>
+                    <span>Total: {{ system.ram.total }} GB</span>
+                </div>
+            </div>
+            
+            <!-- Disk Space Progress -->
+            <div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold">Storage Drive (/) Usage</span>
+                    <span class="text-success fw-bold">{{ system.disk.percent }}%</span>
+                </div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom {% if system.disk.percent > 90 %}bg-danger{% endif %}" style="width: {{ system.disk.percent }}%"></div>
+                </div>
+                <div class="text-muted mt-1" style="font-size: 0.8rem; display: flex; justify-content-between;">
+                    <span>Used: {{ system.disk.used }} GB</span>
+                    <span>Free: {{ system.disk.free }} GB</span>
+                    <span>Total: {{ system.disk.total }} GB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-5 mb-4">
+        <div class="card-custom h-100">
+            <h2 class="card-title-custom"><i class="fas fa-bolt"></i>Quick IT Actions</h2>
+            
+            <div class="d-grid gap-3">
+                <a href="{{ url_for('network_test_route') }}" class="btn btn-custom-green py-3 text-start">
+                    <i class="fas fa-network-wired me-3 fa-lg"></i>
+                    <span>Run Connection Test</span>
+                </a>
+                
+                <a href="{{ url_for('reports_route') }}" class="btn btn-custom-outline py-3 text-start">
+                    <i class="fas fa-file-export me-3 fa-lg"></i>
+                    <span>Generate Full Diagnostics Report</span>
+                </a>
+                
+                <a href="{{ url_for('password_generator_route') }}" class="btn btn-custom-outline py-3 text-start">
+                    <i class="fas fa-key me-3 fa-lg"></i>
+                    <span>Generate Secure Password</span>
+                </a>
+                
+                <a href="{{ url_for('process_monitor_route') }}" class="btn btn-custom-outline py-3 text-start">
+                    <i class="fas fa-microchip me-3 fa-lg"></i>
+                    <span>Manage Running Processes</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Network overview specs -->
+    <div class="col-md-6 mb-4">
+        <div class="card-custom">
+            <h2 class="card-title-custom"><i class="fas fa-network-wired"></i>Network Parameters</h2>
+            <table class="table table-custom table-borderless m-0">
+                <tbody>
+                    <tr>
+                        <td class="text-muted">Local IP Address</td>
+                        <td class="text-end terminal-text"><strong>{{ system.local_ip }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Public IP Address</td>
+                        <td class="text-end terminal-text"><strong>{{ system.public_ip }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">MAC Address</td>
+                        <td class="text-end terminal-text">{{ system.mac_address }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Gateway Server</td>
+                        <td class="text-end terminal-text">{{ network.gateway.ip }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- User/OS specs -->
+    <div class="col-md-6 mb-4">
+        <div class="card-custom">
+            <h2 class="card-title-custom"><i class="fas fa-shield-alt"></i>Security Profile</h2>
+            <table class="table table-custom table-borderless m-0">
+                <tbody>
+                    <tr>
+                        <td class="text-muted">Host Name</td>
+                        <td class="text-end"><strong>{{ system.hostname }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Logged Username</td>
+                        <td class="text-end"><code>{{ system.username }}</code></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">OS Version</td>
+                        <td class="text-end">{{ system.os }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Active Services</td>
+                        <td class="text-end text-success">{{ services_running_count }} Services running</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

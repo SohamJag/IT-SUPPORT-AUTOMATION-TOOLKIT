@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Software Inventory{% endblock %}
+
+{% block header_title %}Software Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="card-custom">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <h2 class="card-title-custom m-0"><i class="fas fa-box-open"></i>Installed Applications Registry</h2>
+        
+        <div class="d-flex gap-2" style="max-width: 400px; width: 100%;">
+            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-search"></i></span>
+            <input type="text" id="software-search" class="form-control form-control-custom" placeholder="Search application registry...">
+        </div>
+    </div>
+    
+    <p class="text-muted mb-4" style="font-size: 0.875rem;">
+        This list contains applications detected on the client machine by querying system application folders (on macOS) or registry folders (on Windows), supplemented with default IT-managed configurations.
+    </p>
+    
+    <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr style="position: sticky; top: 0; background-color: var(--bg-card); z-index: 10;">
+                    <th style="width: 50px;">#</th>
+                    <th>Application / Software Suite</th>
+                    <th class="text-end">Installed Version</th>
+                </tr>
+            </thead>
+            <tbody id="software-table-body">
+                {% for app in software %}
+                <tr>
+                    <td class="text-muted">{{ loop.index }}</td>
+                    <td>
+                        <strong class="software-name text-white">{{ app.name }}</strong>
+                    </td>
+                    <td class="text-end terminal-text software-version text-success">
+                        {{ app.version }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

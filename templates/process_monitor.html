@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Process Monitor{% endblock %}
+
+{% block header_title %}Process Monitor{% endblock %}
+
+{% block content %}
+<div class="card-custom">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <h2 class="card-title-custom m-0"><i class="fas fa-microchip"></i>Active System Processes</h2>
+        
+        <div class="d-flex gap-2" style="max-width: 400px; width: 100%;">
+            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-search"></i></span>
+            <input type="text" id="process-search" class="form-control form-control-custom" placeholder="Search processes by Name, PID, User...">
+        </div>
+    </div>
+    
+    <div class="alert alert-warning bg-opacity-10 border border-warning text-warning mb-4 d-flex align-items-center gap-3">
+        <i class="fas fa-exclamation-triangle fa-lg"></i>
+        <div>
+            <strong>Caution:</strong> Terminating crucial processes (like system daemons or system components) can result in an immediate operating system crash or loss of unsaved state. Ensure you know the target PID before triggering 'End Task'.
+        </div>
+    </div>
+    
+    <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr style="position: sticky; top: 0; background-color: var(--bg-card); z-index: 10;">
+                    <th>PID</th>
+                    <th>Process Name</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>CPU Load</th>
+                    <th>Memory Usage</th>
+                    <th class="text-end">Task Operation</th>
+                </tr>
+            </thead>
+            <tbody id="process-table-body">
+                {% for p in processes %}
+                <tr>
+                    <td class="terminal-text process-pid">{{ p.pid }}</td>
+                    <td>
+                        <strong class="process-name text-white">{{ p.name }}</strong>
+                    </td>
+                    <td class="process-user"><code>{{ p.username }}</code></td>
+                    <td>
+                        <span class="badge bg-opacity-25 {% if p.status == 'Running' %}bg-success text-success{% else %}bg-secondary text-secondary{% endif %}">
+                            {{ p.status }}
+                        </span>
+                    </td>
+                    <td class="terminal-text text-success">{{ p.cpu }}%</td>
+                    <td class="terminal-text">
+                        {{ p.memory_mb }} MB <span class="text-muted" style="font-size: 0.75rem;">({{ p.memory_pct }}%)</span>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-danger kill-process-btn" data-pid="{{ p.pid }}" data-name="{{ p.name }}">
+                            <i class="fas fa-times me-1"></i>End Task
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

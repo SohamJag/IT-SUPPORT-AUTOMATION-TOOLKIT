@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - System Information{% endblock %}
+
+{% block header_title %}System Information Collector{% endblock %}
+
+{% block content %}
+<div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="card-title-custom m-0"><i class="fas fa-desktop"></i>Collected System Metrics</h2>
+        <a href="{{ url_for('reports_route') }}" class="btn btn-custom-green">
+            <i class="fas fa-file-export me-2"></i>Generate Report
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Identity block -->
+        <div class="col-lg-6 mb-4">
+            <h5 class="text-success border-bottom border-secondary pb-2 mb-3"><i class="fas fa-id-badge me-2"></i>Node Identity</h5>
+            <table class="table table-custom">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width: 150px;">Hostname</td>
+                        <td><strong>{{ info.hostname }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Username</td>
+                        <td><code>{{ info.username }}</code></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Operating System</td>
+                        <td>{{ info.os }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">OS Build Details</td>
+                        <td><small>{{ info.os_details }}</small></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Network Adapters -->
+        <div class="col-lg-6 mb-4">
+            <h5 class="text-success border-bottom border-secondary pb-2 mb-3"><i class="fas fa-ethernet me-2"></i>Network Adapters</h5>
+            <table class="table table-custom">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width: 150px;">Local IP Address</td>
+                        <td class="terminal-text"><strong>{{ info.local_ip }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Public IP Address</td>
+                        <td class="terminal-text"><strong>{{ info.public_ip }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">MAC Address</td>
+                        <td class="terminal-text">{{ info.mac_address }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Gateway Address</td>
+                        <td class="terminal-text">{{ gateway_ip }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Processor details -->
+        <div class="col-lg-6 mb-4">
+            <h5 class="text-success border-bottom border-secondary pb-2 mb-3"><i class="fas fa-microchip me-2"></i>Processor Details</h5>
+            <table class="table table-custom">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width: 150px;">CPU Model</td>
+                        <td>{{ info.cpu.model }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Physical Cores</td>
+                        <td>{{ info.cpu.cores_physical }} Cores</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Logical Processors</td>
+                        <td>{{ info.cpu.cores_logical }} Cores</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Current CPU Load</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="progress-custom flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar-custom" style="width: {{ info.cpu.current_usage }}%"></div>
+                                </div>
+                                <span class="fw-bold text-success">{{ info.cpu.current_usage }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- RAM memory details -->
+        <div class="col-lg-6 mb-4">
+            <h5 class="text-success border-bottom border-secondary pb-2 mb-3"><i class="fas fa-memory me-2"></i>Physical Memory (RAM)</h5>
+            <table class="table table-custom">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width: 150px;">Total Size</td>
+                        <td>{{ info.ram.total }} GB</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Used Space</td>
+                        <td>{{ info.ram.used }} GB</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Free Space</td>
+                        <td>{{ info.ram.free }} GB</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Memory Load %</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="progress-custom flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar-custom" style="width: {{ info.ram.percent }}%"></div>
+                                </div>
+                                <span class="fw-bold text-success">{{ info.ram.percent }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

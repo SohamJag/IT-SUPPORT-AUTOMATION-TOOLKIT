@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IT Support Automation Toolkit{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Dark Grey + Green styling -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-toolbox text-success fa-lg"></i>
+                <h1 class="sidebar-brand">IT-SUPPORT<span>.IO</span></h1>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item {% if active_page == 'dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('index') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'system_info' %}active{% endif %}">
+                    <a href="{{ url_for('system_info_route') }}">
+                        <i class="fas fa-info-circle"></i>
+                        <span>System Info</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'disk_health' %}active{% endif %}">
+                    <a href="{{ url_for('disk_health_route') }}">
+                        <i class="fas fa-hdd"></i>
+                        <span>Disk Health</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'network_test' %}active{% endif %}">
+                    <a href="{{ url_for('network_test_route') }}">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Network Test</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'service_checker' %}active{% endif %}">
+                    <a href="{{ url_for('service_checker_route') }}">
+                        <i class="fas fa-cogs"></i>
+                        <span>Service Checker</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'process_monitor' %}active{% endif %}">
+                    <a href="{{ url_for('process_monitor_route') }}">
+                        <i class="fas fa-microchip"></i>
+                        <span>Process Monitor</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'software_inventory' %}active{% endif %}">
+                    <a href="{{ url_for('software_inventory_route') }}">
+                        <i class="fas fa-box-open"></i>
+                        <span>Software Inventory</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'password_generator' %}active{% endif %}">
+                    <a href="{{ url_for('password_generator_route') }}">
+                        <i class="fas fa-key"></i>
+                        <span>Password Gen</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'event_log_analyzer' %}active{% endif %}">
+                    <a href="{{ url_for('event_log_analyzer_route') }}">
+                        <i class="fas fa-terminal"></i>
+                        <span>Event Logs</span>
+                    </a>
+                </li>
+                <li class="menu-item {% if active_page == 'reports' %}active{% endif %}">
+                    <a href="{{ url_for('reports_route') }}">
+                        <i class="fas fa-file-export"></i>
+                        <span>Reports History</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div>IT Automation v1.0.0</div>
+                <div class="mt-1 text-success">
+                    <span class="pulse-indicator"></span> Online
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Panel -->
+        <main class="main-content">
+            <!-- Top Nav Bar -->
+            <header class="top-nav">
+                <div class="d-flex align-items-center gap-3">
+                    <h4 class="m-0 text-white font-weight-bold">
+                        {% block header_title %}Swiss Army Knife for IT Support{% endblock %}
+                    </h4>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                    <!-- Basic System Stats in Top Bar -->
+                    <div class="d-none d-md-flex align-items-center gap-3 text-muted" style="font-size: 0.825rem;">
+                        <div>
+                            <i class="fas fa-user-tie text-success me-1"></i>
+                            <span>Engineer: <strong>{{ session_username }}</strong></span>
+                        </div>
+                        <div class="vr" style="background-color: var(--border-color); height: 16px;"></div>
+                        <div>
+                            <i class="fas fa-desktop text-success me-1"></i>
+                            <span>OS: <strong>{{ session_os }}</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Body Viewport -->
+            <div class="content-body">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Toolkit interactions -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

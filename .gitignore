@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database and reports
+toolkit.db
+reports/*
+!reports/.gitkeep
+
+# Charts and local UI builds
+static/disk_usage.png
+static/disk_usage.png.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.log

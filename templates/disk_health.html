@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Disk Health{% endblock %}
+
+{% block header_title %}Disk Health Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Storage Volume Metrics Table -->
+    <div class="col-lg-8 mb-4">
+        <div class="card-custom h-100">
+            <h2 class="card-title-custom"><i class="fas fa-hdd"></i>Storage Volume Metrics</h2>
+            
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>Device</th>
+                            <th>Mount Point</th>
+                            <th>Total Space</th>
+                            <th>Used Space</th>
+                            <th>Free Space</th>
+                            <th style="width: 150px;">Usage %</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for drive in drives %}
+                        <tr>
+                            <td class="terminal-text"><strong>{{ drive.device }}</strong></td>
+                            <td class="terminal-text">{{ drive.mountpoint }}</td>
+                            <td>{{ drive.total }} GB</td>
+                            <td>{{ drive.used }} GB</td>
+                            <td>{{ drive.free }} GB</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress-custom flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar-custom {% if drive.percent > 90 %}bg-danger{% elif drive.percent > 75 %}bg-warning{% endif %}" style="width: {{ drive.percent }}%"></div>
+                                    </div>
+                                    <span style="font-size: 0.8rem;">{{ drive.percent }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-pill {{ 'status-critical' if drive.status == 'Critical' else ('status-warning' if drive.status == 'Warning' else 'status-active') }}">
+                                    {% if drive.status == 'Critical' %}
+                                        <span class="pulse-indicator red"></span> Critical
+                                    {% elif drive.status == 'Warning' %}
+                                        <span class="pulse-indicator-warning"></span> Warning
+                                    {% else %}
+                                        <span class="pulse-indicator"></span> Healthy
+                                    {% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if warning_drives_count > 0 %}
+            <div class="alert alert-danger bg-opacity-10 border border-danger text-danger mt-4 d-flex align-items-center gap-3">
+                <i class="fas fa-exclamation-triangle fa-lg"></i>
+                <div>
+                    <strong>Low Storage Alert!</strong> We detected {{ warning_drives_count }} storage drive(s) running out of space (usage exceed 90%). Please clean temporary files or expand volume partitions immediately.
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Matplotlib drive charts -->
+    <div class="col-lg-4 mb-4">
+        <div class="card-custom h-100 d-flex flex-column align-items-center justify-content-center">
+            <h2 class="card-title-custom w-100 mb-4 text-center"><i class="fas fa-chart-pie"></i>Drive Capacity Chart</h2>
+            
+            {% if chart_file %}
+            <div class="text-center">
+                <img src="{{ url_for('static', filename=chart_file) }}?t={{ cache_buster }}" class="img-fluid rounded border border-secondary" style="max-height: 280px;" alt="Disk usage pie chart">
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-image fa-3x mb-3 text-secondary"></i>
+                <div>Chart generation not available.</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

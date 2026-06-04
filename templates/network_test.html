@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Network Diagnostic{% endblock %}
+
+{% block header_title %}Network Connectivity Tester{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Active Network Checks table -->
+    <div class="col-lg-6 mb-4">
+        <div class="card-custom h-100">
+            <h2 class="card-title-custom"><i class="fas fa-network-wired"></i>Connectivity Diagnostic Metrics</h2>
+            
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Diagnostic Parameters</th>
+                        <th>Scan Result</th>
+                        <th class="text-end">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="net-internet-row">
+                        <td class="text-muted">Internet Availability</td>
+                        <td id="net-internet-val">Verify active socket routing</td>
+                        <td class="text-end">
+                            <span class="status-pill status-active" id="net-internet-badge">
+                                <span class="pulse-indicator"></span> {{ network.internet.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr id="net-dns-row">
+                        <td class="text-muted">DNS Domain Resolution</td>
+                        <td id="net-dns-val">Resolve google.com</td>
+                        <td class="text-end">
+                            <span class="status-pill status-active" id="net-dns-badge">
+                                <span class="pulse-indicator"></span> {{ network.dns.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr id="net-ping-row">
+                        <td class="text-muted">Google Server Ping</td>
+                        <td id="net-ping-val">ICMP echo latency</td>
+                        <td class="text-end">
+                            <span class="status-pill status-active" id="net-ping-badge">
+                                <span class="pulse-indicator"></span> {{ network.ping.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr id="net-gateway-row">
+                        <td class="text-muted">Default Gateway Reachable</td>
+                        <td id="net-gateway-val">IP: {{ network.gateway.ip }}</td>
+                        <td class="text-end">
+                            <span class="status-pill status-active" id="net-gateway-badge">
+                                <span class="pulse-indicator"></span> {{ network.gateway.status }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-4 text-center">
+                <button class="btn btn-custom-green py-3 w-100" id="run-net-test-btn">
+                    <i class="fas fa-play me-2"></i>Run Connectivity Diagnostics
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Emulated Network Terminal -->
+    <div class="col-lg-6 mb-4">
+        <div class="card-custom h-100 d-flex flex-column">
+            <h2 class="card-title-custom mb-3"><i class="fas fa-terminal"></i>Terminal Output Stream</h2>
+            
+            <div class="terminal-console flex-grow-1" style="min-height: 250px;">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                    </div>
+                    <span>diagnose_network.sh - bash</span>
+                </div>
+                <pre id="net-terminal-output" class="m-0 text-success" style="white-space: pre-wrap; font-size: 0.8rem;">[READY] Click 'Run Connectivity Diagnostics' to scan socket channels...</pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

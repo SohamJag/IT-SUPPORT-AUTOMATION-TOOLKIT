@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Service Checker{% endblock %}
+
+{% block header_title %}Service Health Checker{% endblock %}
+
+{% block content %}
+<div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="card-title-custom m-0"><i class="fas fa-cogs"></i>Core OS Background Services</h2>
+        <a href="{{ url_for('service_checker_route') }}" class="btn btn-custom-outline">
+            <i class="fas fa-sync me-2"></i>Reload Services List
+        </a>
+    </div>
+    
+    <div class="alert alert-info bg-opacity-10 border border-info text-info mb-4 d-flex align-items-start gap-3">
+        <i class="fas fa-shield-alt fa-lg mt-1"></i>
+        <div>
+            <strong>Administrative Privileges Note:</strong> Starting or stopping background services is a privileged action. If the automation toolkit is not running with administrative credentials (e.g. administrator mode or root sudo), the control actions will return an access error.
+        </div>
+    </div>
+    
+    <div class="row" id="services-list-container">
+        {% for svc in services %}
+        <div class="col-md-6 mb-4">
+            <div class="border border-secondary rounded p-3 h-100 d-flex flex-column justify-content-between bg-black bg-opacity-10 hover-glow" style="transition: border-color 0.2s;">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-white fs-5">{{ svc.display }}</span>
+                        
+                        <span class="status-pill {{ 'status-active' if svc.status == 'Running' else 'status-critical' }}">
+                            {% if svc.status == 'Running' %}
+                                <span class="pulse-indicator"></span> Running
+                            {% else %}
+                                <span class="pulse-indicator red"></span> Stopped
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="text-muted mb-2">
+                        <small>Identifier: <code>{{ svc.name }}</code></small>
+                    </div>
+                    
+                    <p class="text-secondary mb-3" style="font-size: 0.85rem;">
+                        {{ svc.desc }}
+                    </p>
+                </div>
+                
+                <div class="text-end border-top border-secondary pt-3 mt-2">
+                    {% if svc.status == 'Running' %}
+                    <button class="btn btn-sm btn-outline-danger service-toggle-btn" data-service="{{ svc.name }}" data-status="Running">
+                        <i class="fas fa-stop me-1"></i>Stop Service
+                    </button>
+                    {% else %}
+                    <button class="btn btn-sm btn-custom-green service-toggle-btn" data-service="{{ svc.name }}" data-status="Stopped">
+                        <i class="fas fa-play me-1"></i>Start Service
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

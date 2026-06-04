@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}IT Support - Event Log Analyzer{% endblock %}
+
+{% block header_title %}Event Log Analyzer{% endblock %}
+
+{% block content %}
+<div class="card-custom">
+    <!-- Filter Controls Header -->
+    <form id="event-log-form" class="row align-items-end g-3 mb-4">
+        <!-- Severity Level -->
+        <div class="col-md-3">
+            <label for="log-level" class="form-label text-muted"><i class="fas fa-filter me-2 text-success"></i>Severity Level</label>
+            <select class="form-select form-control-custom" id="log-level">
+                <option value="">All Anomalies (Error, Warn, Crit)</option>
+                <option value="critical">Critical Only</option>
+                <option value="error">Error & Critical</option>
+                <option value="warning">Warning Only</option>
+            </select>
+        </div>
+        
+        <!-- Search input query -->
+        <div class="col-md-5">
+            <label for="log-search" class="form-label text-muted"><i class="fas fa-search me-2 text-success"></i>Search Log Messages</label>
+            <input type="text" class="form-control form-control-custom" id="log-search" placeholder="Filter by Source, Event ID, Message content...">
+        </div>
+        
+        <!-- Query buttons -->
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-custom-green flex-grow-1">
+                <i class="fas fa-search me-2"></i>Filter Logs
+            </button>
+            <button id="export-logs-csv" class="btn btn-custom-outline">
+                <i class="fas fa-file-csv me-2"></i>Export CSV
+            </button>
+        </div>
+    </form>
+    
+    <p class="text-secondary mb-4" style="font-size: 0.825rem;">
+        This page aggregates event logs matching critical levels. When running on non-Windows environments (like macOS or Linux), this view provides a simulated catalog of representative enterprise support logs for demonstration.
+    </p>
+
+    <!-- Logs Table -->
+    <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr style="position: sticky; top: 0; background-color: var(--bg-card); z-index: 10;">
+                    <th style="width: 180px;">Timestamp</th>
+                    <th style="width: 100px;">Severity</th>
+                    <th style="width: 150px;">Source</th>
+                    <th style="width: 100px;">Event ID</th>
+                    <th>Message Summary</th>
+                </tr>
+            </thead>
+            <tbody id="logs-table-body">
+                {% for log in logs %}
+                <tr>
+                    <td class="text-muted" style="white-space: nowrap;">{{ log.timestamp }}</td>
+                    <td>
+                        <span class="{% if log.level.lower() in ['error', 'critical'] %}text-danger fw-bold{% else %}text-warning{% endif %}">
+                            {{ log.level }}
+                        </span>
+                    </td>
+                    <td><strong>{{ log.source }}</strong></td>
+                    <td class="terminal-text">{{ log.event_id }}</td>
+                    <td>{{ log.message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
